@@ -16,8 +16,10 @@
 </p>
 
 <p>
-  <strong>Password digest:</strong>
-  <%= @user.password_digest %>
+  <strong>Articles:</strong>
+  <% @user.articles.each do |article| %>
+    <%= article.title %> - <%= article.content %>
+  <% end %>
 </p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |

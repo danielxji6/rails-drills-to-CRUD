@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
-
+  before_action :logged_in?, only: [:new, :create, :edit, :update, :destroy]
   # GET /articles
   # GET /articles.json
   def index
@@ -19,20 +19,25 @@ class ArticlesController < ApplicationController
 
   # GET /articles/1/edit
   def edit
+    unless current_user == @article.user
+      redirect_to user_path(current_user)
+    end
   end
 
   # POST /articles
   # POST /articles.json
   def create
-    @article = Article.new(article_params)
-
-    respond_to do |format|
-      if @article.save
-        format.html { redirect_to @article, notice: 'Article was successfully created.' }
-        format.json { render :show, status: :created, location: @article }
-      else
-        format.html { render :new }
-        format.json { render json: @article.errors, status: :unprocessable_entity }
+    unless current_user == @article.user
+      @article = Article.new(article_params)
+      current_user.articles << @article
+      respond_to do |format|
+        if @article.save
+          flash[:notice] = "Article was created."
+          redirect_to article_path(@article)
+        else
+          flash[:notice] = "Failed to create new article."
+          redirect_to new_article_path
+        end
       end
     end
   end

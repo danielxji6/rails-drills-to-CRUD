@@ -1,11 +1,12 @@
 Rails.application.routes.draw do
+
+  root to: "articles#index"
+
   resources :articles
   resources :users
 
-  root to: "user#index"
-
   get "/login", to: "sessions#new"
-  get "/log", to:"sessions#destroy"
+  get "/logout", to:"sessions#destroy"
   post "/sessions", to: "sessions#create"
 
 end
